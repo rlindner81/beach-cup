@@ -43,23 +43,16 @@ const JSOPersistence = (
     return _store[path];
   };
   const _filter = (
-    records: Array<JSOStoreRecord>,
     where: JSOStoreWhere,
-    options?: Record<"inverse", boolean>,
-  ): Array<JSOStoreRecord> => {
-    const { inverse = false } = options || {};
-    return records.filter((record) => {
+  ) =>
+    (record: JSOStoreRecord) => {
       for (const [key, value] of Object.entries(where)) {
-        if (
-          record[key] !== value ||
-          (inverse && record[key] === value)
-        ) {
+        if (record[key] !== value) {
           return false;
         }
       }
       return true;
-    });
-  };
+    };
 
   const initialize = async (): Promise<void> => {
     await _unflush();
@@ -92,17 +85,25 @@ const JSOPersistence = (
     if (records === null) {
       return null;
     }
-    return where ? _filter(records, where) : records;
+    return where ? records.filter(_filter(where)) : records.slice();
   };
-  const readOne = (
+  const readFirst = (
     path: string,
     where?: JSOStoreWhere,
   ): JSOStoreRecord | null => {
-    const records = read(path, where);
+    let records = _access(path);
     if (records === null) {
       return null;
     }
-    return records.length === 1 ? records[0] : null;
+    if (where) {
+      const whereFilter = _filter(where);
+      for (const record of records) {
+        if (whereFilter(record)) {
+          return record;
+        }
+      }
+    }
+    return records.length > 1 ? records[0] : null;
   };
 
   const update = (
@@ -110,16 +111,24 @@ const JSOPersistence = (
     payload: JSOStoreRecord,
     where?: JSOStoreWhere,
   ): number | null => {
-    const records = read(path, where);
+    let records = _access(path);
     if (records === null) {
       return null;
     }
-    const changes = records.map((record) => {
-      for (const [key, value] of Object.entries(payload)) {
-        record[key] = value;
+    let changes = 0;
+    const whereFilter = where ? _filter(where) : null;
+    _store[path] = records.map((record) => {
+      if(whereFilter && !whereFilter(record)) {
+        return record;
       }
+      changes++;
+      const newRecord = { ...record };
+      for (const [key, value] of Object.entries(payload)) {
+        newRecord[key] = value;
+      }
+      return newRecord;
     });
-    return changes.length;
+    return changes;
   };
 
   const remove = (path: string, where?: JSOStoreWhere): number | null => {
@@ -127,19 +136,23 @@ const JSOPersistence = (
     if (records === null) {
       return null;
     }
-    if (!where) {
-      _store[path] = [];
-      return records.length;
-    }
-    const filteredRecords = _filter(records, where, { inverse: true });
-    _store[path] = filteredRecords;
-    return records.length - filteredRecords.length;
+    let changes = 0;
+    const whereFilter = where ? _filter(where) : null;
+    _store[path] = records.filter((record) => {
+      if(whereFilter && whereFilter(record)) {
+        changes++;
+        return false;
+      }
+      return true;
+    });
+    return changes;
   };
 
   return {
     initialize,
     create,
     read,
+    readOne: readFirst,
     update,
     delete: remove,
   };
