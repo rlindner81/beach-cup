@@ -1,15 +1,16 @@
-import { exists } from "https://deno.land/std@0.70.0/fs/mod.ts";
+import { exists } from "https://deno.land/std@0.71.0/fs/mod.ts";
 
 // TODO Arrays???
 
 type JSOStoreInner = { [key: string]: JSOStore };
 type JSOStore = string | number | boolean | JSOStoreInner;
 
-const JSOPersistence = async (
+const JSOPersistence = (
   filepath = "./store.json",
   pollTimeout = 1000,
 ) => {
   let _store: JSOStoreInner = Object.create(null);
+  let _pollingId: number | null = null;
 
   const _flush = async (): Promise<void> =>
     Deno.writeTextFile(filepath, JSON.stringify(_store));
@@ -19,12 +20,12 @@ const JSOPersistence = async (
     }
   };
 
-  await _unflush();
-  setInterval(async () => _flush(), pollTimeout);
-
   const _accessInner = (
     path: string,
   ): JSOStoreInner | null => {
+    if (_pollingId === null) {
+      return null;
+    }
     const keys = path.split("/");
     if (keys.length < 1) {
       return null;
@@ -38,6 +39,11 @@ const JSOPersistence = async (
     } catch (err) {
       return null;
     }
+  };
+
+  const initialize = async (): Promise<void> => {
+    await _unflush();
+    _pollingId = setInterval(async () => _flush(), pollTimeout);
   };
 
   const create = (
@@ -82,6 +88,7 @@ const JSOPersistence = async (
   };
 
   return {
+    initialize,
     create,
     read,
     update,
@@ -89,5 +96,5 @@ const JSOPersistence = async (
   };
 };
 
-export default JSOPersistence;
+export { JSOPersistence };
 export type { JSOStore };
