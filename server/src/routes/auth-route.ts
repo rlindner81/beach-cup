@@ -3,7 +3,7 @@ import authMiddleware from "../middlewares/auth-middleware.ts";
 import { Router, RouterOptions, Status } from "../deps.ts";
 import store from "../store.ts";
 
-export default (options: RouterOptions) => {
+export default (options?: RouterOptions) => {
   const router: Router = new Router(options);
 
   router.get("/test", async (ctx) => {

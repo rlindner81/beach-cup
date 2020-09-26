@@ -5,7 +5,7 @@
       "type": "pwa-node",
       "request": "launch",
       "name": "Server",
-      "program": "${workspaceFolder}/src/main.ts",
+      "program": "${workspaceFolder}/src/server.ts",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "deno",
       "runtimeArgs": [
@@ -14,7 +14,8 @@
         "--inspect-brk=127.0.0.1:9229",
         "--allow-all"
       ],
-      "attachSimplePort": 9229
+      "outputCapture": "std",
+      "attachSimplePort": 9229,
     }
   ]
 }

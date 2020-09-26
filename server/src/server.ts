@@ -4,13 +4,17 @@ import SessionMiddleware from "./middlewares/session-middleware.ts";
 import AuthRouter from "./routes/auth-route.ts";
 
 const app = new Application();
-// const sessionMiddleware = SessionMiddleware();
-const authRouter = AuthRouter({ routerPath: "/api/auth" });
+const envPort = Deno.env.get("PORT");
+const port = envPort ? parseInt(envPort) : 8080;
 
-// app.use(SessionMiddleware());
 await store.initialize();
 
+// const sessionMiddleware = SessionMiddleware();
+// app.use(sessionMiddleware());
+
+const authRouter = AuthRouter({ prefix: "/api/auth" });
 app.use(authRouter.allowedMethods());
 app.use(authRouter.routes());
 
-await app.listen({ port: 8000 });
+console.log("listening on port %d", port);
+await app.listen({ port });

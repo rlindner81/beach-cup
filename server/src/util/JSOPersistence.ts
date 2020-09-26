@@ -121,7 +121,7 @@ const JSOPersistence = (
     let changes = 0;
     const whereFilter = where ? _filter(where) : null;
     _store[path] = records.map((record) => {
-      if(whereFilter && !whereFilter(record)) {
+      if (whereFilter && !whereFilter(record)) {
         return record;
       }
       changes++;
@@ -142,7 +142,7 @@ const JSOPersistence = (
     let changes = 0;
     const whereFilter = where ? _filter(where) : null;
     _store[path] = records.filter((record) => {
-      if(whereFilter && whereFilter(record)) {
+      if (whereFilter && whereFilter(record)) {
         changes++;
         return false;
       }
