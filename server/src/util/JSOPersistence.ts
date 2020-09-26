@@ -75,7 +75,7 @@ const JSOPersistence = (
     }
     const newRecord = Object.prototype.hasOwnProperty.call(payload, "id")
       ? { ...payload }
-      : { id: records.length, ...payload };
+      : { id: records.length + 1, ...payload };
     records.push(newRecord);
     return newRecord;
   };
