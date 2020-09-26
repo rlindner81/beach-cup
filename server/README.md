@@ -1,5 +1,13 @@
 # beach-cup-server
 
+```
+# install
+deno cache --reload src/server.ts
+
+# run
+deno run src/server.ts
+```
+
 ## dependencies
 
 * https://github.com/deno-postgres/deno-postgres db driver
