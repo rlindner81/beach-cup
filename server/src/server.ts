@@ -3,7 +3,7 @@ import store from "./store.ts";
 import SessionMiddleware from "./middlewares/session-middleware.ts";
 import AuthRouter from "./routes/auth-route.ts";
 
-const app = new Application();
+const app = new Application({ keys: ["lalala"] });
 const envPort = Deno.env.get("PORT");
 const port = envPort ? parseInt(envPort) : 8080;
 

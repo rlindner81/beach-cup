@@ -11,8 +11,8 @@
       "runtimeArgs": [
         "run",
         "--unstable",
+        "--allow-all",
         "--inspect-brk=127.0.0.1:9229",
-        "--allow-all"
       ],
       "outputCapture": "std",
       "attachSimplePort": 9229,

@@ -7,7 +7,7 @@ export default (options?: RouterOptions) => {
   const router: Router = new Router(options);
 
   router.get("/test", async (ctx) => {
-    store.create("./users", { name: "navi" });
+    // store.create("./users", { name: "navi" });
     const users = store.read("./users");
     ctx.response.body = JSON.stringify(users);
   });

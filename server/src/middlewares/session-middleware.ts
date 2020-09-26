@@ -4,8 +4,8 @@ import type { Context } from "../deps.ts";
 const SESSION_COOKIE_KEY = "sid";
 
 const SessionMiddlewares = () => {
-  return (ctx: Context) => {
-    const sessionId = ctx.cookies.get(SESSION_COOKIE_KEY, { signed: true });
+  return async (ctx: Context, next: () => Promise<void>) => {
+    const sessionId = ctx.cookies.get(SESSION_COOKIE_KEY);
     let session = null;
     if (sessionId) {
       session = store.readFirst("./session", { id: parseInt(sessionId) });
@@ -16,11 +16,11 @@ const SessionMiddlewares = () => {
       }
       ctx.cookies.set(
         SESSION_COOKIE_KEY,
-        session.id as string,
-        { signed: true, secure: true },
+        String(session.id),
       );
     }
     ctx.state.session = session;
+    await next();
   };
 };
 
