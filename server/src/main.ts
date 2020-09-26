@@ -1,8 +1,8 @@
-import { Application, Router } from "../deps.ts";
+import { Application, Router, Context } from "../deps.ts";
 
 const app = new Application();
 
-app.use((ctx) => {
+app.use((ctx: Context) => {
   ctx.response.body = "Hello World!";
 });
 
