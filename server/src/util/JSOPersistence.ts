@@ -1,5 +1,7 @@
 import { exists } from "https://deno.land/std@0.70.0/fs/mod.ts";
 
+// TODO Arrays???
+
 type JSOStoreInner = { [key: string]: JSOStore };
 type JSOStore = string | number | boolean | JSOStoreInner;
 
@@ -9,21 +11,21 @@ const JSOPersistence = async (
 ) => {
   let _store: JSOStoreInner = Object.create(null);
 
-  const _flush = async () =>
+  const _flush = async (): Promise<void> =>
     Deno.writeTextFile(filepath, JSON.stringify(_store));
-  const _unflush = async () => {
-    await exists(filepath) && (
-      _store = JSON.parse(await Deno.readTextFile(filepath))
-    );
+  const _unflush = async (): Promise<void> => {
+    if (await exists(filepath)) {
+      _store = JSON.parse(await Deno.readTextFile(filepath));
+    }
   };
 
   await _unflush();
   setInterval(async () => _flush(), pollTimeout);
 
-  const _access = (
-    accessPath: string,
+  const _accessInner = (
+    path: string,
   ): JSOStoreInner | null => {
-    const keys = accessPath.split("/");
+    const keys = path.split("/");
     if (keys.length < 1) {
       return null;
     }
@@ -38,23 +40,47 @@ const JSOPersistence = async (
     }
   };
 
-  const create = (accessPath: string, name: string, payload: JSOStore) => {
-    const node = _access(accessPath);
+  const create = (
+    path: string,
+    name: string,
+    payload: JSOStore,
+  ): JSOStore | null => {
+    const node = _accessInner(path);
     if (node === null) {
       return null;
     }
     node[name] = payload;
+    return node[name];
   };
-  const read = (accessPath: string) => _access(accessPath);
-  const update = (accessPath: string, name: string, payload: JSOStore) => {
-    const node = _access(accessPath);
+  const read = (path: string, name: string): JSOStore | null => {
+    const node = _accessInner(path);
+    if (node === null) {
+      return null;
+    }
+    return node[name];
+  };
+  const update = (
+    path: string,
+    name: string,
+    payload: JSOStore,
+  ): JSOStore | null => {
+    const node = _accessInner(path);
     if (node === null) {
       return null;
     }
     node[name] = Object.assign(payload, node[name]);
+    return node[name];
   };
-  const remove = (accessPath: string) => {
+  const remove = (path: string, name: string): JSOStore | null => {
+    const node = _accessInner(path);
+    if (node === null) {
+      return null;
+    }
+    const value = node[name];
+    Reflect.deleteProperty(node, name);
+    return value;
   };
+
   return {
     create,
     read,
@@ -64,3 +90,4 @@ const JSOPersistence = async (
 };
 
 export default JSOPersistence;
+export type { JSOStore };
