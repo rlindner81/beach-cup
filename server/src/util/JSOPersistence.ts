@@ -1,14 +1,17 @@
 import { exists } from "https://deno.land/std@0.71.0/fs/mod.ts";
 
 /**
-
 await store.initialize();
 const name = store.create("./names", { givenName: "richard", familyName: "lindner" });
-const allNames = store.read("./names", { id: name.id });
-const myName = store.readOne("./names", { id: name.id });
-const updateCount = store.update("./names", { id: name.id }, { givenName: "valentin" });
-const deleteCount = store.delete("./names", { id: name.id });
-
+if (name !== null) {
+  const allNames = store.read("./names");
+  const myName = store.readFirst("./names", { id: name.id });
+  const updateCount = store.update("./names", { givenName: "valentin" }, { id: name.id });
+  const changedNames = store.read("./names", { id: name.id });
+  const deleteCount = store.delete("./names", { id: name.id });
+  const noNames = store.read("./names", { id: name.id });
+  const i = 0;
+}
 */
 
 type JSOStoreBase = string | number | boolean;
@@ -24,7 +27,7 @@ const JSOPersistence = (
   let _pollingId: number | null = null;
 
   const _flush = async (): Promise<void> =>
-    Deno.writeTextFile(filepath, JSON.stringify(_store));
+    Deno.writeTextFile(filepath, JSON.stringify(_store, null, 2) + "\n");
   const _unflush = async (): Promise<void> => {
     if (await exists(filepath)) {
       _store = JSON.parse(await Deno.readTextFile(filepath));
@@ -152,7 +155,7 @@ const JSOPersistence = (
     initialize,
     create,
     read,
-    readOne: readFirst,
+    readFirst,
     update,
     delete: remove,
   };
