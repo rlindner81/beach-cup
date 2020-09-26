@@ -47,8 +47,18 @@ const JSOPersistence = (
     where: JSOStoreWhere,
     options?: Record<"inverse", boolean>,
   ): Array<JSOStoreRecord> => {
-    const i = 0;
-    return records;
+    const { inverse = false } = options || {};
+    return records.filter((record) => {
+      for (const [key, value] of Object.entries(where)) {
+        if (
+          record[key] !== value ||
+          (inverse && record[key] === value)
+        ) {
+          return false;
+        }
+      }
+      return true;
+    });
   };
 
   const initialize = async (): Promise<void> => {
