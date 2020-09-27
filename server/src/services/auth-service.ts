@@ -7,13 +7,11 @@ const isLoggedIn = (ctx: Context) =>
   Object.prototype.hasOwnProperty.call(ctx.state.session, "userId");
 
 const login = async (ctx: Context) => {
-  ctx.assert(ctx.request.hasBody, Status.UnprocessableEntity);
   const { email, password } = await ctx.request.body({ type: "json" }).value;
-  ctx.assert(email !== undefined, Status.UnprocessableEntity, Error.UserNotFound);
   const dbUser = store.readFirst("./users", { email });
   ctx.assert(dbUser !== null, Status.UnprocessableEntity, Error.UserNotFound);
   const match = await bcrypt.compare(password, dbUser.password as string);
-  ctx.assert(match, Status.Unauthorized, Error.WrongPassword);
+  ctx.assert(match, Status.Forbidden, Error.WrongPassword);
   ctx.state.session.userId = dbUser.id;
 };
 
