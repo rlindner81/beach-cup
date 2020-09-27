@@ -10,6 +10,6 @@ const logout = async (session: Session) => {
   Reflect.deleteProperty(session, "userId");
 };
 const getMe = async (session: Session) =>
-  store.readFirst("./users", { userId: session.userId });
+  store.readFirst("./users", { id: session.userId });
 
 export { isLoggedIn, login, logout, getMe };
