@@ -12,6 +12,16 @@ const port = envPort ? parseInt(envPort) : 8080;
 
 await store.initialize();
 
+app.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    console.error(err);
+    ctx.response.status = err.status;
+    ctx.response.body = err.message;
+  }
+});
+
 app.use(sessionMiddleware);
 
 const authRouter = AuthRouter({ prefix: "/api/auth" });

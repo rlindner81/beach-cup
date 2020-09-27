@@ -2,7 +2,8 @@
   "./users": [
     {
       "id": 1,
-      "name": "navi"
+      "email": "richard.lindner@sap.com",
+      "password": "$2y$12$4ShNQpB.QtInDWOEadmBkO8PiYUZOealKlhEu8796YyJFXSquaS7C"
     }
   ],
   "./session": [

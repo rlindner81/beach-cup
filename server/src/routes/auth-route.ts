@@ -6,17 +6,17 @@ export default (options?: RouterOptions) => {
   const router: Router = new Router(options);
 
   router.post("/login", async (ctx: Context) => {
-    await login(ctx.state.session, ctx.request.body);
+    await login(ctx);
     ctx.response.body = "Login successful";
   });
 
   router.post("/logout", async (ctx: Context) => {
-    await logout(ctx.state.session);
+    await logout(ctx);
     ctx.response.body = "Logout successful";
   });
 
   router.get("/me", authMiddleware, async (ctx: Context) => {
-    const me = await getMe(ctx.state.session);
+    const me = await getMe(ctx);
     ctx.response.body = JSON.stringify(me);
   });
 

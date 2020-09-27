@@ -1,15 +1,31 @@
 import store from "../store.ts";
-import type { Session } from "../middlewares/session-middleware.ts";
+import { bcrypt, Status } from "../deps.ts";
+import type { Context } from "../deps.ts";
+import Error from "../errors.ts";
 
-const isLoggedIn = (session: Session) =>
-  Object.prototype.hasOwnProperty.call(session, "userId");
-const login = async (session: Session, body: any) => {
-  session.userId = 1;
+const isLoggedIn = (ctx: Context) =>
+  Object.prototype.hasOwnProperty.call(ctx.state.session, "userId");
+
+const login = async (ctx: Context) => {
+  ctx.assert(ctx.request.hasBody, Status.UnprocessableEntity);
+  const { email, password } = await ctx.request.body({ type: "json" }).value;
+  ctx.assert(email !== undefined, Status.UnprocessableEntity, Error.UserNotFound);
+  const dbUser = store.readFirst("./users", { email });
+  ctx.assert(dbUser !== null, Status.UnprocessableEntity, Error.UserNotFound);
+  const match = await bcrypt.compare(password, dbUser.password as string);
+  ctx.assert(match, Status.Unauthorized, Error.WrongPassword);
+  ctx.state.session.userId = dbUser.id;
 };
-const logout = async (session: Session) => {
-  Reflect.deleteProperty(session, "userId");
+
+const logout = async (ctx: Context) => {
+  Reflect.deleteProperty(ctx.state.session, "userId");
 };
-const getMe = async (session: Session) =>
-  store.readFirst("./users", { id: session.userId });
+
+const getMe = async (ctx: Context) => {
+  const me = store.readFirst("./users", { id: ctx.state.session.userId });
+  ctx.assert(me !== null, Status.UnprocessableEntity, Error.UserNotFound);
+  Reflect.deleteProperty(me, "password");
+  return me;
+};
 
 export { isLoggedIn, login, logout, getMe };
