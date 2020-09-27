@@ -4,6 +4,8 @@ import type { Context } from "../deps.ts";
 const SESSION_COOKIE_KEY = "sid";
 const SESSION_COOKIE_LIFETIME_SECONDS = 365 * 24 * 3600; // 1 year
 
+export type Session = Record<"userId", string>;
+
 const SessionMiddleware = async (ctx: Context, next: () => Promise<void>) => {
   const userId = ctx.cookies.get(SESSION_COOKIE_KEY);
   let session = null;

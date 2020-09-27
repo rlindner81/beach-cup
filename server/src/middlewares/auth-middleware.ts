@@ -4,7 +4,7 @@ import { isLoggedIn } from "../services/auth-service.ts";
 
 const AuthMiddleware = async (ctx: Context, next: () => Promise<void>) => {
   ctx.assert(
-    await isLoggedIn(ctx.state.session),
+    isLoggedIn(ctx.state.session),
     Status.Unauthorized,
   );
   await next();

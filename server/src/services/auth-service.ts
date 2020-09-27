@@ -1,11 +1,13 @@
 import store from "../store.ts";
+import type { Session } from "../middlewares/session-middleware.ts";
 
-const isLoggedIn = async (session: any) => true;
-const login = async (session: any, body: any) => {
+const isLoggedIn = (session: Session) =>
+  Object.prototype.hasOwnProperty.call(session, "userId");
+const login = async (session: Session, body: any) => {
 };
-const logout = async (session: any) => {
+const logout = async (session: Session) => {
 };
-const getMe = async (session: any) => {
+const getMe = async (session: Session) => {
   return { hello: "sailor" };
 };
 
