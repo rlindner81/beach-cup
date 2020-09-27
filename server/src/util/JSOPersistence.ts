@@ -2,14 +2,14 @@ import { exists } from "https://deno.land/std@0.71.0/fs/mod.ts";
 
 /**
 await store.initialize();
-const name = store.create("./names", { givenName: "richard", familyName: "lindner" });
+const name = store.create("./users", { givenName: "richard", familyName: "lindner" });
 if (name !== null) {
-  const allNames = store.read("./names");
-  const myName = store.readFirst("./names", { id: name.id });
-  const updateCount = store.update("./names", { givenName: "valentin" }, { id: name.id });
-  const changedNames = store.read("./names", { id: name.id });
-  const deleteCount = store.delete("./names", { id: name.id });
-  const noNames = store.read("./names", { id: name.id });
+  const allNames = store.read("./users");
+  const myName = store.readFirst("./users", { id: name.id });
+  const updateCount = store.update("./users", { givenName: "navi" }, { id: name.id });
+  const changedNames = store.read("./users", { id: name.id });
+  const deleteCount = store.delete("./users", { id: name.id });
+  const noNames = store.read("./users", { id: name.id });
   const i = 0;
 }
 */

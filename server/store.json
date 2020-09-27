@@ -2,17 +2,9 @@
   "./users": [
     {
       "id": 1,
+      "name": "Richard",
       "email": "richard.lindner@sap.com",
       "password": "$2y$12$4ShNQpB.QtInDWOEadmBkO8PiYUZOealKlhEu8796YyJFXSquaS7C"
     }
-  ],
-  "./session": [
-    {
-      "id": 1
-    },
-    {
-      "id": 2
-    }
-  ],
-  "./user": []
+  ]
 }
