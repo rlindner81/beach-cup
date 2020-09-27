@@ -91,6 +91,18 @@ const JSOPersistence = (
     }
     return where ? records.filter(_filter(where)) : records.slice();
   };
+  const readAndClone = (
+    path: string,
+    where?: JSOStoreWhere,
+  ): Array<JSOStoreRecord> | null => {
+    const records = _access(path);
+    if (records === null) {
+      return null;
+    }
+    const filteredRecords = where ? records.filter(_filter(where)) : records.slice();
+    return filteredRecords.map((record) => ({ ...record }));
+  };
+
   const readFirst = (
     path: string,
     where?: JSOStoreWhere,
@@ -166,6 +178,7 @@ const JSOPersistence = (
     initialize,
     create,
     read,
+    readAndClone,
     readFirst,
     readFirstAndClone,
     update,

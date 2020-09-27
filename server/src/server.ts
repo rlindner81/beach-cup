@@ -2,6 +2,7 @@ import { Application } from "./deps.ts";
 import store from "./store.ts";
 import sessionMiddleware from "./middlewares/session-middleware.ts";
 import AuthRouter from "./routes/auth-route.ts";
+import CupRouter from "./routes/cup-route.ts";
 
 const envCookieKey = Deno.env.get("COOKIE_KEY");
 const envPort = Deno.env.get("PORT");
@@ -27,6 +28,10 @@ app.use(sessionMiddleware);
 const authRouter = AuthRouter({ prefix: "/api/auth" });
 app.use(authRouter.allowedMethods());
 app.use(authRouter.routes());
+
+const cupRouter = CupRouter({ prefix: "/api/cup" });
+app.use(cupRouter.allowedMethods());
+app.use(cupRouter.routes());
 
 console.log("listening on port %d", port);
 await app.listen({ port });
