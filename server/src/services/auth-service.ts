@@ -22,10 +22,18 @@ const logout = async (ctx: Context) => {
 };
 
 const getMe = async (ctx: Context) => {
-  const me = store.readFirst("./users", { id: ctx.state.session.userId });
+  const me = store.readFirstAndClone("./users", { id: ctx.state.session.userId });
   ctx.assert(me !== null, Status.UnprocessableEntity, Error.UserNotFound);
+  Reflect.deleteProperty(me, "id");
   Reflect.deleteProperty(me, "password");
   return me;
 };
 
-export { isLoggedIn, login, logout, getMe };
+const updateMe = async (ctx: Context) => {
+  return getMe(ctx);
+};
+
+const register = async (ctx: Context) => {
+};
+
+export { isLoggedIn, login, logout, getMe, updateMe, register };

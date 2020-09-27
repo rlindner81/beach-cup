@@ -108,6 +108,16 @@ const JSOPersistence = (
     }
     return records.length > 1 ? records[0] : null;
   };
+  const readFirstAndClone = (
+    path: string,
+    where?: JSOStoreWhere,
+  ): JSOStoreRecord | null => {
+    const result = readFirst(path, where);
+    if (result === null) {
+      return null;
+    }
+    return { ...result };
+  };
 
   const update = (
     path: string,
@@ -156,6 +166,7 @@ const JSOPersistence = (
     create,
     read,
     readFirst,
+    readFirstAndClone,
     update,
     delete: remove,
   };
