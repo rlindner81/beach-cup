@@ -1,6 +1,6 @@
 import { validasaur, Status } from "../deps.ts";
 import type { Context } from "../deps.ts";
-const { validate, flattenMessages } = validasaur;
+const { validate, firstMessages } = validasaur;
 
 const ValidateMiddleware = (schema: validasaur.ValidationRules) =>
   async (ctx: Context, next: () => Promise<void>) => {
@@ -12,7 +12,7 @@ const ValidateMiddleware = (schema: validasaur.ValidationRules) =>
     ctx.assert(
       passes,
       Status.UnprocessableEntity,
-      JSON.stringify(flattenMessages(errors)),
+      JSON.stringify(firstMessages(errors)),
     );
     await next();
   };

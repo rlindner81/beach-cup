@@ -5,6 +5,12 @@
       "name": "Richard",
       "email": "richard.lindner@sap.com",
       "password": "$2y$12$4ShNQpB.QtInDWOEadmBkO8PiYUZOealKlhEu8796YyJFXSquaS7C"
+    },
+    {
+      "name": "zweiter",
+      "email": "richard@sap.com",
+      "password": "$2a$10$WbZBo5jP3/5Kh6t5S5xRBO2h5SANf5wgZd5egrzHG1UPOBfapWnBa",
+      "id": 2
     }
   ]
 }

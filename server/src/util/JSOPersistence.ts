@@ -62,6 +62,7 @@ const JSOPersistence = (
     _pollingId = setInterval(async () => _flush(), pollTimeout);
   };
 
+  // returns a clone, but payload is a reference to the inserted object to avoid double cloning
   const create = (
     path: string,
     payload: JSOStoreRecord,
@@ -73,11 +74,11 @@ const JSOPersistence = (
     if (!Object.prototype.hasOwnProperty.call(_store, path)) {
       _store[path] = [];
     }
-    const newRecord = Object.prototype.hasOwnProperty.call(payload, "id")
-      ? { ...payload }
-      : { id: records.length + 1, ...payload };
-    records.push(newRecord);
-    return newRecord;
+    if (!Object.prototype.hasOwnProperty.call(payload, "id")) {
+      payload.id = records.length + 1;
+    }
+    records.push(payload);
+    return { ...payload };
   };
 
   const read = (
