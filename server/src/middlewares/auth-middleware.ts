@@ -1,10 +1,12 @@
+import { Status } from "../deps.ts";
 import type { Context } from "../deps.ts";
 import { isLoggedIn } from "../services/auth-service.ts";
 
 const AuthMiddleware = async (ctx: Context, next: () => Promise<void>) => {
-  if (!isLoggedIn(ctx.state.session)) {
-    throw Error("missing authorization");
-  }
+  ctx.assert(
+    await isLoggedIn(ctx.state.session),
+    Status.Unauthorized,
+  );
   await next();
 };
 

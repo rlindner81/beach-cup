@@ -1,32 +1,23 @@
 import { login, logout, getMe } from "../services/auth-service.ts";
 import authMiddleware from "../middlewares/auth-middleware.ts";
-import { Router, RouterOptions, Status } from "../deps.ts";
+import { Context, Router, RouterOptions, Status } from "../deps.ts";
 
 export default (options?: RouterOptions) => {
   const router: Router = new Router(options);
 
-  router.post("/login", async (ctx, next) => {
-    login(ctx.state.session, ctx.request.body)
-      .then(() => {
-        ctx.response.body = "Login successful";
-      })
-      .catch(next);
+  router.post("/login", async (ctx: Context) => {
+    await login(ctx.state.session, ctx.request.body);
+    ctx.response.body = "Login successful";
   });
 
-  router.post("/logout", async (ctx, next) => {
-    logout(ctx.state.session)
-      .then(() => {
-        ctx.response.body = "Logout successful";
-      })
-      .catch(next);
+  router.post("/logout", async (ctx: Context) => {
+    await logout(ctx.state.session);
+    ctx.response.body = "Logout successful";
   });
 
-  router.get("/me", authMiddleware, async (ctx, next) => {
-    getMe(ctx.state.session)
-      .then((result) => {
-        ctx.response.body = result;
-      })
-      .catch(next);
+  router.get("/me", authMiddleware, async (ctx: Context) => {
+    const me = await getMe(ctx.state.session);
+    ctx.response.body = JSON.stringify(me);
   });
 
   // router.patch("/me", authMiddleware, async (ctx, next) => {
